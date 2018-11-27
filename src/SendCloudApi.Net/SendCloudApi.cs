@@ -143,11 +143,10 @@ namespace SendCloudApi.Net
                 }
                 return JsonHelper.Deserialize<T>(jsonResult, dateTimeFormat);
             }
-            HandleResponseError(response);
-            return default(T);
+            throw await HandleResponseError(response);
         }
 
-        private async void HandleResponseError(HttpResponseMessage response)
+        private async Task<Exception> HandleResponseError(HttpResponseMessage response)
         {
             string message;
             switch (response.StatusCode)
@@ -161,7 +160,7 @@ namespace SendCloudApi.Net
                     message = result["error"].Message;
                     break;
             }
-            throw new SendCloudException(message);
+            return new SendCloudException(message);
         }
 
         //public async Task<string> Download(string url)
